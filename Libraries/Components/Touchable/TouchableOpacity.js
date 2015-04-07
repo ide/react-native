@@ -13,6 +13,7 @@
 // Note (avik): add @flow when Flow supports spread properties in propTypes
 
 var Animated = require('Animated');
+var EdgeInsetsPropType = require('EdgeInsetsPropType');
 var NativeMethodsMixin = require('NativeMethodsMixin');
 var React = require('React');
 var TimerMixin = require('react-timer-mixin');
@@ -24,6 +25,8 @@ var flattenStyle = require('flattenStyle');
 var keyOf = require('keyOf');
 
 type Event = Object;
+
+var PRESS_RETENTION_OFFSET = {top: 20, left: 20, right: 20, bottom: 30};
 
 /**
  * A wrapper for making views respond properly to touches.
@@ -49,7 +52,6 @@ type Event = Object;
  * >
  * > If you wish to have to have several child components, wrap them in a View.
  */
-
 var TouchableOpacity = React.createClass({
   mixins: [TimerMixin, Touchable.Mixin, NativeMethodsMixin],
 
@@ -65,6 +67,7 @@ var TouchableOpacity = React.createClass({
   getDefaultProps: function() {
     return {
       activeOpacity: 0.2,
+      pressRetentionOffset: PRESS_RETENTION_OFFSET,
     };
   },
 
@@ -123,7 +126,7 @@ var TouchableOpacity = React.createClass({
   },
 
   touchableGetPressRectOffset: function() {
-    return PRESS_RECT_OFFSET;   // Always make sure to predeclare a constant!
+    return this.props.pressRetentionOffset;
   },
 
   touchableGetHighlightDelayMS: function() {
@@ -169,14 +172,5 @@ var TouchableOpacity = React.createClass({
     );
   },
 });
-
-/**
- * When the scroll view is disabled, this defines how far your touch may move
- * off of the button, before deactivating the button. Once deactivated, try
- * moving it back and you'll see that the button is once again reactivated!
- * Move it back and forth several times while the scroll view is disabled.
- */
-var PRESS_RECT_OFFSET = {top: 20, left: 20, right: 20, bottom: 30};
-
 
 module.exports = TouchableOpacity;
