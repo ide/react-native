@@ -49,6 +49,8 @@
 		58114A171AAE854800E7D092 /* RCTPickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 58114A151AAE854800E7D092 /* RCTPickerManager.m */; };
 		58114A501AAE93D500E7D092 /* RCTAsyncLocalStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 58114A4E1AAE93D500E7D092 /* RCTAsyncLocalStorage.m */; };
 		58C571C11AA56C1900CDF9C8 /* RCTDatePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 58C571BF1AA56C1900CDF9C8 /* RCTDatePickerManager.m */; };
+		784CE52E1AD325A600001B90 /* RCTBridgeModuleLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 784CE52D1AD325A600001B90 /* RCTBridgeModuleLoader.m */; };
+		784CE5321AD3505C00001B90 /* RCTBridgeModuleConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 784CE5311AD3505C00001B90 /* RCTBridgeModuleConfiguration.m */; };
 		830A229E1A66C68A008503DA /* RCTRootView.m in Sources */ = {isa = PBXBuildFile; fileRef = 830A229D1A66C68A008503DA /* RCTRootView.m */; };
 		830BA4551A8E3BDA00D53203 /* RCTCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 830BA4541A8E3BDA00D53203 /* RCTCache.m */; };
 		832348161A77A5AA00B55238 /* Layout.c in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FC71A68125100A75B9A /* Layout.c */; };
@@ -167,6 +169,10 @@
 		58114A4F1AAE93D500E7D092 /* RCTAsyncLocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTAsyncLocalStorage.h; sourceTree = "<group>"; };
 		58C571BF1AA56C1900CDF9C8 /* RCTDatePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTDatePickerManager.m; sourceTree = "<group>"; };
 		58C571C01AA56C1900CDF9C8 /* RCTDatePickerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTDatePickerManager.h; sourceTree = "<group>"; };
+		784CE52C1AD325A600001B90 /* RCTBridgeModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTBridgeModuleLoader.h; sourceTree = "<group>"; };
+		784CE52D1AD325A600001B90 /* RCTBridgeModuleLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTBridgeModuleLoader.m; sourceTree = "<group>"; };
+		784CE5301AD3505C00001B90 /* RCTBridgeModuleConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTBridgeModuleConfiguration.h; sourceTree = "<group>"; };
+		784CE5311AD3505C00001B90 /* RCTBridgeModuleConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTBridgeModuleConfiguration.m; sourceTree = "<group>"; };
 		830213F31A654E0800B993E6 /* RCTBridgeModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTBridgeModule.h; sourceTree = "<group>"; };
 		830A229C1A66C68A008503DA /* RCTRootView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTRootView.h; sourceTree = "<group>"; };
 		830A229D1A66C68A008503DA /* RCTRootView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTRootView.m; sourceTree = "<group>"; };
@@ -358,6 +364,10 @@
 				83CBBA5E1A601EAA00E9B192 /* RCTBridge.h */,
 				83CBBA5F1A601EAA00E9B192 /* RCTBridge.m */,
 				830213F31A654E0800B993E6 /* RCTBridgeModule.h */,
+				784CE5301AD3505C00001B90 /* RCTBridgeModuleConfiguration.h */,
+				784CE5311AD3505C00001B90 /* RCTBridgeModuleConfiguration.m */,
+				784CE52C1AD325A600001B90 /* RCTBridgeModuleLoader.h */,
+				784CE52D1AD325A600001B90 /* RCTBridgeModuleLoader.m */,
 				830BA4531A8E3BDA00D53203 /* RCTCache.h */,
 				830BA4541A8E3BDA00D53203 /* RCTCache.m */,
 				83CBBACA1A6023D300E9B192 /* RCTConvert.h */,
@@ -479,6 +489,7 @@
 				58C571C11AA56C1900CDF9C8 /* RCTDatePickerManager.m in Sources */,
 				13B080061A6947C200A75B9A /* RCTScrollViewManager.m in Sources */,
 				14200DAA1AC179B3008EE6BA /* RCTJavaScriptLoader.m in Sources */,
+				784CE5321AD3505C00001B90 /* RCTBridgeModuleConfiguration.m in Sources */,
 				137327EA1AA5CF210034F82E /* RCTTabBarManager.m in Sources */,
 				13B080261A694A8400A75B9A /* RCTWrapperViewController.m in Sources */,
 				13B080051A6947C200A75B9A /* RCTScrollView.m in Sources */,
@@ -500,6 +511,7 @@
 				13C156051AB1A2840079392D /* RCTWebView.m in Sources */,
 				83CBBA601A601EAA00E9B192 /* RCTBridge.m in Sources */,
 				13C156061AB1A2840079392D /* RCTWebViewManager.m in Sources */,
+				784CE52E1AD325A600001B90 /* RCTBridgeModuleLoader.m in Sources */,
 				58114A161AAE854800E7D092 /* RCTPicker.m in Sources */,
 				137327E81AA5CF210034F82E /* RCTTabBarItem.m in Sources */,
 				13E067551A70F44B002CDEE1 /* RCTShadowView.m in Sources */,

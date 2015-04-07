@@ -45,6 +45,9 @@ void RCTSwapInstanceMethods(Class cls, SEL original, SEL replacement);
 BOOL RCTClassOverridesClassMethod(Class cls, SEL selector);
 BOOL RCTClassOverridesInstanceMethod(Class cls, SEL selector);
 
+// Returns the canonical JS module name for the given bridge module class
+NSString *RCTModuleNameForClass(Class cls);
+
 // Enumerate all classes that conform to NSObject protocol
 void RCTEnumerateClasses(void (^block)(Class cls));
 

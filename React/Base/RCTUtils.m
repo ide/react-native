@@ -16,6 +16,7 @@
 
 #import <CommonCrypto/CommonCrypto.h>
 
+#import "RCTBridgeModule.h"
 #import "RCTLog.h"
 
 NSString *RCTJSONStringify(id jsonObject, NSError **error)
@@ -181,6 +182,11 @@ BOOL RCTClassOverridesInstanceMethod(Class cls, SEL selector)
   }
   free(methods);
   return NO;
+}
+
+NSString *RCTModuleNameForClass(Class cls)
+{
+  return [cls respondsToSelector:@selector(moduleName)] ? [cls moduleName] : NSStringFromClass(cls);
 }
 
 void RCTEnumerateClasses(void (^block)(Class cls))
