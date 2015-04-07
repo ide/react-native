@@ -12,6 +12,7 @@
 
 // Note (avik): add @flow when Flow supports spread properties in propTypes
 
+var EdgeInsetsPropType = require('EdgeInsetsPropType');
 var NativeMethodsMixin = require('NativeMethodsMixin');
 var POPAnimationMixin = require('POPAnimationMixin');
 var React = require('React');
@@ -23,6 +24,8 @@ var ensureComponentIsNative = require('ensureComponentIsNative');
 var flattenStyle = require('flattenStyle');
 var keyOf = require('keyOf');
 var onlyChild = require('onlyChild');
+
+var TOUCH_RETENTION_OFFSET = {top: 20, left: 20, right: 20, bottom: 30};
 
 /**
  * A wrapper for making views respond properly to touches.
@@ -48,7 +51,6 @@ var onlyChild = require('onlyChild');
  * >
  * > If you wish to have to have several child components, wrap them in a View.
  */
-
 var TouchableOpacity = React.createClass({
   mixins: [Touchable.Mixin, NativeMethodsMixin, POPAnimationMixin],
 
@@ -64,6 +66,7 @@ var TouchableOpacity = React.createClass({
   getDefaultProps: function() {
     return {
       activeOpacity: 0.2,
+      touchRetentionOffset: TOUCH_RETENTION_OFFSET,
     };
   },
 
@@ -124,7 +127,7 @@ var TouchableOpacity = React.createClass({
   },
 
   touchableGetPressRectOffset: function() {
-    return PRESS_RECT_OFFSET;   // Always make sure to predeclare a constant!
+    return this.props.touchRetentionOffset;
   },
 
   touchableGetHighlightDelayMS: function() {
@@ -145,14 +148,6 @@ var TouchableOpacity = React.createClass({
     });
   },
 });
-
-/**
- * When the scroll view is disabled, this defines how far your touch may move
- * off of the button, before deactivating the button. Once deactivated, try
- * moving it back and you'll see that the button is once again reactivated!
- * Move it back and forth several times while the scroll view is disabled.
- */
-var PRESS_RECT_OFFSET = {top: 20, left: 20, right: 20, bottom: 30};
 
 var CHILD_REF = keyOf({childRef: null});
 

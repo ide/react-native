@@ -12,6 +12,7 @@
 'use strict';
 
 var AnimationExperimental = require('AnimationExperimental');
+var EdgeInsetsPropType = require('EdgeInsetsPropType');
 var NativeMethodsMixin = require('NativeMethodsMixin');
 var POPAnimation = require('POPAnimation');
 var React = require('React');
@@ -20,17 +21,16 @@ var Touchable = require('Touchable');
 var merge = require('merge');
 var onlyChild = require('onlyChild');
 
+var TOUCH_RETENTION_OFFSET = {top: 20, left: 20, right: 20, bottom: 30};
+
+type DefaultProps = {
+  touchRetentionOffset: typeof TOUCH_RETENTION_OFFSET;
+};
+
 type State = {
   animationID: ?number;
 };
 
-/**
- * When the scroll view is disabled, this defines how far your touch may move
- * off of the button, before deactivating the button. Once deactivated, try
- * moving it back and you'll see that the button is once again reactivated!
- * Move it back and forth several times while the scroll view is disabled.
- */
-var PRESS_RECT_OFFSET = {top: 20, left: 20, right: 20, bottom: 30};
 /**
  * Example of using the `TouchableMixin` to play well with other responder
  * locking views including `ScrollView`. `TouchableMixin` provides touchable
@@ -49,6 +49,20 @@ var TouchableBounce = React.createClass({
     onPressWithCompletion: React.PropTypes.func,
     // the function passed is called after the animation is complete
     onPressAnimationComplete: React.PropTypes.func,
+    /**
+     * When the scroll view is disabled, this defines how far your touch may
+     * move off of the button, before deactivating the button. Once deactivated,
+     * try moving it back and you'll see that the button is once again
+     * reactivated! Move it back and forth several times while the scroll view
+     * is disabled. Ensure you pass in a constant to reduce memory allocations.
+     */
+    touchRetentionOffset: EdgeInsetsPropType,
+  },
+
+  getDefaultProps: function(): DefaultProps {
+    return {
+      touchRetentionOffset: TOUCH_RETENTION_OFFSET,
+    };
   },
 
   getInitialState: function(): State {
@@ -113,8 +127,8 @@ var TouchableBounce = React.createClass({
     this.props.onPress && this.props.onPress();
   },
 
-  touchableGetPressRectOffset: function(): typeof PRESS_RECT_OFFSET {
-    return PRESS_RECT_OFFSET;   // Always make sure to predeclare a constant!
+  touchableGetPressRectOffset: function(): typeof TOUCH_RETENTION_OFFSET {
+    return this.props.touchRetentionOffset;
   },
 
   touchableGetHighlightDelayMS: function(): number {
