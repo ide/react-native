@@ -34,9 +34,9 @@ var ScrollResponder = require('ScrollResponder');
 var StaticRenderer = require('StaticRenderer');
 var TimerMixin = require('react-timer-mixin');
 
+var isEmpty = require('isEmpty');
 var logError = require('logError');
 var merge = require('merge');
-var isEmpty = require('isEmpty');
 
 var PropTypes = React.PropTypes;
 
@@ -175,6 +175,13 @@ var ListView = React.createClass({
      */
     renderSectionHeader: PropTypes.func,
     /**
+     * (props) => renderable
+     *
+     * A function that returns the scroll view in which the list rows are
+     * rendered. Defaults to returning a ScrollView with the given props.
+     */
+    renderScrollView: React.PropTypes.func.isRequired,
+    /**
      * How early to start rendering rows before they come on screen, in
      * pixels.
      */
@@ -229,6 +236,7 @@ var ListView = React.createClass({
     return {
       initialListSize: DEFAULT_INITIAL_ROWS,
       pageSize: DEFAULT_PAGE_SIZE,
+      renderScrollView: (props) => <ScrollView {...props} />,
       scrollRenderAheadDistance: DEFAULT_SCROLL_RENDER_AHEAD,
       onEndReachedThreshold: DEFAULT_END_REACHED_THRESHOLD,
     };
@@ -352,24 +360,22 @@ var ListView = React.createClass({
       }
     }
 
-    var props = merge(
-      this.props, {
-        onScroll: this._onScroll,
-        stickyHeaderIndices: sectionHeaderIndices,
-      }
-    );
+    var {
+      renderScrollView,
+      ...props,
+    } = this.props;
     if (!props.scrollEventThrottle) {
       props.scrollEventThrottle = DEFAULT_SCROLL_CALLBACK_THROTTLE;
     }
+    Object.assign(props, {
+      onScroll: this._onScroll,
+      stickyHeaderIndices: sectionHeaderIndices,
+      children: [header, bodyComponents, footer],
+    });
 
-    return (
-      <ScrollView {...props}
-        ref={SCROLLVIEW_REF}>
-        {header}
-        {bodyComponents}
-        {footer}
-      </ScrollView>
-    );
+    return React.cloneElement(renderScrollView(props), {
+      ref: SCROLLVIEW_REF,
+    });
   },
 
   /**
