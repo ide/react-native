@@ -17,6 +17,9 @@
 #import "RCTUIManager.h"
 #import "UIView+React.h"
 
+@interface RCTRootContentView () <UIGestureRecognizerDelegate>
+@end
+
 @implementation RCTRootContentView
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -29,6 +32,7 @@
     self.reactTag = reactTag;
     _sizeFlexibility = sizeFlexibility;
     _touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
+    _touchHandler.delegate = self;
     [_touchHandler attachToView:self];
     [_bridge.uiManager registerRootView:self];
   }
@@ -105,6 +109,21 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithCoder:(nonnull NSCoder *)aDecoder)
                       args:@[self.reactTag]
                 completion:NULL];
   }
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+  if (![gestureRecognizer isKindOfClass:[RCTTouchHandler class]]) {
+    return YES;
+  }
+
+  UIView *currentView = touch.view;
+  while (currentView && ![currentView isReactRootView]) {
+    currentView = currentView.superview;
+  }
+  return currentView == self;
 }
 
 @end
