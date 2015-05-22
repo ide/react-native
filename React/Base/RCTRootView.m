@@ -39,7 +39,7 @@ NSString *const RCTContentDidAppearNotification = @"RCTContentDidAppearNotificat
 
 @end
 
-@interface RCTRootContentView : RCTView <RCTInvalidating>
+@interface RCTRootContentView : RCTView <RCTInvalidating, UIGestureRecognizerDelegate>
 
 @property (nonatomic, readonly) BOOL contentHasAppeared;
 
@@ -287,7 +287,9 @@ RCT_IMPORT_METHOD(ReactNative, unmountComponentAtNodeAndRemoveContainer)
    * the react tag is assigned every time we load new content.
    */
   self.reactTag = [_bridge.uiManager allocateRootTag];
-  [self addGestureRecognizer:[[RCTTouchHandler alloc] initWithBridge:_bridge]];
+  RCTTouchHandler *touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
+  touchHandler.delegate = self;
+  [self addGestureRecognizer:touchHandler];
   [_bridge.uiManager registerRootView:self];
 }
 
@@ -305,5 +307,21 @@ RCT_IMPORT_METHOD(ReactNative, unmountComponentAtNodeAndRemoveContainer)
                       args:@[self.reactTag]];
   }
 }
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+  if (![gestureRecognizer isKindOfClass:[RCTTouchHandler class]]) {
+    return YES;
+  }
+
+  UIView *currentView = touch.view;
+  while (currentView && ![currentView isReactRootView]) {
+    currentView = currentView.superview;
+  }
+  return currentView == self;
+}
+
 
 @end
