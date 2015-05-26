@@ -92,6 +92,7 @@ var styles = StyleSheet.create({
     top: 0,
   },
   disabledScene: {
+    opacity: 0,
     left: SCREEN_WIDTH,
   },
   transitioner: {
