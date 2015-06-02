@@ -35,7 +35,7 @@ typedef void (^RCTWSMessageCallback)(NSError *error, NSDictionary *reply);
 
 - (instancetype)init
 {
-  return [self initWithURL:[NSURL URLWithString:@"http://localhost:8081/debugger-proxy"]];
+  return [self initWithURL:[NSURL URLWithString:@"http://localhost:8081/iojs-command-queue"]];
 }
 
 - (instancetype)initWithURL:(NSURL *)URL
@@ -49,8 +49,8 @@ typedef void (^RCTWSMessageCallback)(NSError *error, NSDictionary *reply);
     _injectedObjects = [[NSMutableDictionary alloc] init];
     [_socket setDelegateDispatchQueue:_jsQueue];
 
-    NSURL *startDevToolsURL = [NSURL URLWithString:@"/launch-chrome-devtools" relativeToURL:URL];
-    [NSURLConnection connectionWithRequest:[NSURLRequest requestWithURL:startDevToolsURL] delegate:nil];
+   // NSURL *startDevToolsURL = [NSURL URLWithString:@"/launch-chrome-devtools" relativeToURL:URL];
+    //[NSURLConnection connectionWithRequest:[NSURLRequest requestWithURL:startDevToolsURL] delegate:nil];
 
     if (![self connectToProxy]) {
       RCTLogError(@"Connection to %@ timed out. Are you running node proxy? If \

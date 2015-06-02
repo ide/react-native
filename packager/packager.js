@@ -27,6 +27,7 @@ if (!fs.existsSync(path.resolve(__dirname, '..', 'node_modules'))) {
 
 var chalk = require('chalk');
 var connect = require('connect');
+var request = require('request');
 var ReactPackager = require('./react-packager');
 var blacklist = require('./blacklist.js');
 var launchEditor = require('./launchEditor.js');
@@ -137,7 +138,7 @@ var server = runServer(options, function() {
   console.log('\nReact packager ready.\n');
 });
 
-webSocketProxy.attachToServer(server, '/debugger-proxy');
+//webSocketProxy.attachToServer(server, '/debugger-proxy');
 
 function loadRawBody(req, res, next) {
   req.rawBody = '';
@@ -185,6 +186,84 @@ function getDevToolsLauncher(options) {
     }
   };
 }
+
+var WebSocketServer = require('ws').Server;
+var wss = new WebSocketServer({
+  server: server,
+  path: '/iojs-command-queue',
+});
+
+var vm = require('vm');
+var context = vm.createContext({});
+var executeJSCall;
+
+var messageHandlers = {
+  'prepareJSRuntime': function(message, sendReply) {
+    context = vm.createContext({});
+    executeJSCall = vm.runInContext(`
+(function executeJSCall(message) {
+  'use strict';
+  let returnValue = [[], [], [], [], []];
+  if (typeof require === 'undefined') {
+    console.error('Cannot execute JS call because "require" is not defined');
+  } else {
+    var module = require(message.moduleName);
+    returnValue = module[message.moduleMethod].apply(module, message.arguments);
+  }
+  return JSON.stringify(returnValue);
+})
+`, context);
+    sendReply(null);
+  },
+  'executeApplicationScript': function(message, sendReply) {
+    for (var key in message.inject) {
+      context[key] = JSON.parse(message.inject[key]);
+    }
+    request(message.url, function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+        // TODO: send the error back to the app
+        console.error(response);
+        sendReply(null);
+      } else {
+        console.log('loaded application script successfully');
+        vm.runInContext(body, context, {
+          filename: message.url,
+        });
+        sendReply(null);
+      }
+    });
+  },
+  'executeJSCall': function(message, sendReply) {
+    let reply = executeJSCall(message);
+    sendReply(reply);
+  },
+};
+
+wss.on('connection', function(ws) {
+  console.log(server);
+  ws.onerror = function() {
+    console.log('WEBSOCKET ERROR');
+    context = vm.createContext({});
+  };
+
+  ws.onclose = function() {
+    console.log('WEBSOCKET CLOSE');
+    context = vm.createContext({});
+  };
+
+  ws.on('message', function(message) {
+    var command = JSON.parse(message);
+    var sendReply = function(result) {
+      ws.send(JSON.stringify({replyID: command.id, result: result}));
+    };
+    var handler = messageHandlers[command.method];
+    if (handler) {
+      handler(command, sendReply);
+    } else {
+      console.warn('Unknown method: ' + command.method);
+    }
+  });
+});
 
 // A status page so the React/project.pbxproj build script
 // can verify that packager is running on 8081 and not

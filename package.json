@@ -60,6 +60,7 @@
     "react-timer-mixin": "^0.13.1",
     "react-tools": "0.13.2",
     "rebound": "^0.0.12",
+    "request": "^2.57.0",
     "sane": "git://github.com/tadeuzagallo/sane.git#a029f8b04a",
     "source-map": "0.1.31",
     "stacktrace-parser": "git://github.com/frantic/stacktrace-parser.git#493c5e5638",
