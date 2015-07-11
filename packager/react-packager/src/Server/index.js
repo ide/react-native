@@ -54,6 +54,10 @@ var validateOpts = declareOpts({
     type: 'boolean',
     default: false,
   },
+  noWatchman: {
+    type: 'boolean',
+    default: false,
+  },
   assetRoots: {
     type: 'array',
     required: false,
@@ -98,7 +102,9 @@ function Server(options) {
 
   this._fileWatcher = options.nonPersistent
     ? FileWatcher.createDummyWatcher()
-    : new FileWatcher(watchRootConfigs);
+    : new FileWatcher(watchRootConfigs, {
+      noWatchman: options.noWatchman,
+    });
 
   this._assetServer = new AssetServer({
     projectRoots: opts.projectRoots,

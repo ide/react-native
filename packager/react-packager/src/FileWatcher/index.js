@@ -16,14 +16,9 @@ const _ = require('underscore');
 
 const MAX_WAIT_TIME = 25000;
 
-// TODO(amasad): can we use watchman version command instead?r
-const detectingWatcherClass = new Promise(function(resolve) {
-  exec('which watchman', function(err, out) {
-    if (err || out.length === 0) {
-      resolve(sane.NodeWatcher);
-    } else {
-      resolve(sane.WatchmanWatcher);
-    }
+const isWatchmanInstalled = new Promise(function(resolve) {
+  exec('command -v watchman', function(err, out) {
+    resolve(!err && out.length > 0);
   });
 });
 
@@ -31,17 +26,20 @@ let inited = false;
 
 class FileWatcher extends EventEmitter {
 
-  constructor(rootConfigs) {
+  constructor(rootConfigs, options) {
     if (inited) {
       throw new Error('FileWatcher can only be instantiated once');
     }
     inited = true;
 
     super();
+    this._noWatchman = options.noWatchman;
     this._watcherByRoot = Object.create(null);
 
     this._loading = Promise.all(
-      rootConfigs.map(createWatcher)
+      rootConfigs.map((rootConfig) =>
+        createWatcher(rootConfig, this._noWatchman)
+      )
     ).then(watchers => {
       watchers.forEach((watcher, i) => {
         this._watcherByRoot[rootConfigs[i].dir] = watcher;
@@ -66,9 +64,7 @@ class FileWatcher extends EventEmitter {
   }
 
   isWatchman() {
-    return detectingWatcherClass.then(
-      Watcher => Watcher === sane.WatchmanWatcher
-    );
+    return this._noWatchman ? Promise.resolve(false) : isWatchmanInstalled;
   }
 
   end() {
@@ -90,26 +86,34 @@ class FileWatcher extends EventEmitter {
   }
 }
 
-function createWatcher(rootConfig) {
-  return detectingWatcherClass.then(function(Watcher) {
+function createWatcher(rootConfig, noWatchman) {
+  const shouldUseWatchman = noWatchman ?
+    Promise.resolve(false) :
+    isWatchmanInstalled;
+
+  return shouldUseWatchman.then(function(useWatchman) {
+    const Watcher = useWatchman ? sane.WatchmanWatcher : sane.NodeWatcher;
     const watcher = new Watcher(rootConfig.dir, {
       glob: rootConfig.globs,
       dot: false,
     });
+    return waitForWatcher(watcher);
+  });
+}
 
-    return new Promise(function(resolve, reject) {
-      const rejectTimeout = setTimeout(function() {
-        reject(new Error([
-          'Watcher took too long to load',
-          'Try running `watchman version` from your terminal',
-          'https://facebook.github.io/watchman/docs/troubleshooting.html',
-        ].join('\n')));
-      }, MAX_WAIT_TIME);
+function waitForWatcher(watcher) {
+  return new Promise((resolve, reject) => {
+    const rejectTimeout = setTimeout(function() {
+      reject(new Error([
+        'Watcher took too long to load',
+        'Try running `watchman version` from your terminal',
+        'https://facebook.github.io/watchman/docs/troubleshooting.html',
+      ].join('\n')));
+    }, MAX_WAIT_TIME);
 
-      watcher.once('ready', function() {
-        clearTimeout(rejectTimeout);
-        resolve(watcher);
-      });
+    watcher.once('ready', function() {
+      clearTimeout(rejectTimeout);
+      resolve(watcher);
     });
   });
 }

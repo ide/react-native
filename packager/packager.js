@@ -60,6 +60,9 @@ var options = parseCommandLine([{
   command: 'nonPersistent',
   description: 'Disable file watcher'
 }, {
+  command: 'noWatchman',
+  description: 'Uses a Node-based file watcher instead of Watchman'
+}, {
   command: 'transformer',
   type: 'string',
   default: require.resolve('./transformer.js'),
@@ -228,6 +231,7 @@ function getAppMiddleware(options) {
 
   return ReactPackager.middleware({
     nonPersistent: options.nonPersistent,
+    noWatchman: options.noWatchman,
     projectRoots: options.projectRoots,
     blacklistRE: blacklist(options.platform),
     cacheVersion: '2',
