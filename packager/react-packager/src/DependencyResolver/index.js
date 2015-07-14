@@ -104,6 +104,7 @@ HasteDependencyResolver.prototype._prependPolyfillDependencies = function(
    isDev
       ? path.join(__dirname, 'polyfills/prelude_dev.js')
       : path.join(__dirname, 'polyfills/prelude.js'),
+    path.join(__dirname, 'polyfills/process.js'),
     path.join(__dirname, 'polyfills/require.js'),
     path.join(__dirname, 'polyfills/polyfills.js'),
     path.join(__dirname, 'polyfills/console.js'),
