@@ -23,7 +23,8 @@ function transform(srcTxt, filename, options) {
       'es6.blockScoping',
       'es6.classes',
       'es6.destructuring',
-      'es6.parameters.rest',
+      'es6.modules',
+      'es6.parameters',
       'es6.properties.computed',
       'es6.properties.shorthand',
       'es6.spread',
@@ -33,6 +34,10 @@ function transform(srcTxt, filename, options) {
       'flow',
       'react',
       'react.displayName',
+      'runtime',
+    ],
+    blacklist: [
+
     ],
     sourceFileName: filename,
     sourceMaps: false,

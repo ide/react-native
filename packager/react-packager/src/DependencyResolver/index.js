@@ -105,11 +105,8 @@ HasteDependencyResolver.prototype._prependPolyfillDependencies = function(
       ? path.join(__dirname, 'polyfills/prelude_dev.js')
       : path.join(__dirname, 'polyfills/prelude.js'),
     path.join(__dirname, 'polyfills/require.js'),
-    path.join(__dirname, 'polyfills/polyfills.js'),
     path.join(__dirname, 'polyfills/console.js'),
     path.join(__dirname, 'polyfills/error-guard.js'),
-    path.join(__dirname, 'polyfills/String.prototype.es6.js'),
-    path.join(__dirname, 'polyfills/Array.prototype.es6.js'),
   ].concat(this._polyfillModuleNames);
 
   var polyfillModules = polyfillModuleNames.map(
