@@ -315,6 +315,10 @@ RCT_NOT_IMPLEMENTED(-initWithBundleURL:(__unused NSURL *)bundleURL
 
         [self enqueueApplicationScript:script url:bundleURL onComplete:^(NSError *loadError) {
 
+          if (!self.isValid) {
+            return;
+          }
+
           if (loadError) {
             [[RCTRedBox sharedInstance] showError:loadError];
             return;
