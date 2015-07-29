@@ -534,8 +534,10 @@ static NSError *RCTNSErrorFromJSError(JSContextRef context, JSValueRef jsError)
     if (!strongSelf || !strongSelf.isValid) {
       return;
     }
+
+    JSContext *context = strongSelf->_context.context;
     JSStringRef execJSString = JSStringCreateWithCFString((__bridge CFStringRef)script);
-    JSValueRef valueToInject = JSValueMakeFromJSONString(strongSelf->_context.ctx, execJSString);
+    JSValueRef valueToInject = JSValueMakeFromJSONString(context.JSGlobalContextRef, execJSString);
     JSStringRelease(execJSString);
 
     if (!valueToInject) {
@@ -549,10 +551,7 @@ static NSError *RCTNSErrorFromJSError(JSContextRef context, JSValueRef jsError)
       return;
     }
 
-    JSObjectRef globalObject = JSContextGetGlobalObject(strongSelf->_context.ctx);
-    JSStringRef JSName = JSStringCreateWithCFString((__bridge CFStringRef)objectName);
-    JSObjectSetProperty(strongSelf->_context.ctx, globalObject, JSName, valueToInject, kJSPropertyAttributeNone, NULL);
-    JSStringRelease(JSName);
+    context[objectName] = [JSValue valueWithJSValueRef:valueToInject inContext:context];
     if (onComplete) {
       onComplete(nil);
     }
