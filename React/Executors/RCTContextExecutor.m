@@ -290,6 +290,7 @@ static NSError *RCTNSErrorFromJSError(JSContextRef context, JSValueRef jsError)
       JSContext *context = [[JSContext alloc] init];
       strongSelf->_context = [[RCTJavaScriptContext alloc] initWithJSContext:context];
     }
+
     [strongSelf _addNativeHook:RCTNativeLoggingHook withName:"nativeLoggingHook"];
     [strongSelf _addNativeHook:RCTNoop withName:"noop"];
 #if RCT_DEV
@@ -320,17 +321,8 @@ static NSError *RCTNSErrorFromJSError(JSContextRef context, JSValueRef jsError)
 
 - (void)toggleProfilingFlag:(NSNotification *)notification
 {
-  JSObjectRef globalObject = JSContextGetGlobalObject(_context.ctx);
-
-  bool enabled = [notification.name isEqualToString:RCTProfileDidStartProfiling];
-  JSStringRef JSName = JSStringCreateWithUTF8CString("__BridgeProfilingIsProfiling");
-  JSObjectSetProperty(_context.ctx,
-                      globalObject,
-                      JSName,
-                      JSValueMakeBoolean(_context.ctx, enabled),
-                      kJSPropertyAttributeNone,
-                      NULL);
-  JSStringRelease(JSName);
+  BOOL enabled = [notification.name isEqualToString:RCTProfileDidStartProfiling];
+  _context.context[@"__BridgeProfilingIsProfiling"] = @(enabled);
 }
 
 - (void)_addNativeHook:(JSObjectCallAsFunctionCallback)hook withName:(const char *)name
