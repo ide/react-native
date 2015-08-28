@@ -67,6 +67,26 @@ void RCTRegisterModule(Class moduleClass)
 }
 
 /**
+ * Checks if class has been declared as a bridge module that is not
+ * automatically exported to JavaScript.
+ */
+BOOL RCTBridgeModuleClassIsDeclared(Class);
+BOOL RCTBridgeModuleClassIsDeclared(Class cls)
+{
+  return [objc_getAssociatedObject(cls, &RCTBridgeModuleClassIsDeclared) boolValue];
+}
+
+/**
+ * Declares the given class as a bridge module but does not automatically
+ * export it to JavaScript.
+ */
+void RCTDeclareModule(Class);
+void RCTDeclareModule(Class cls)
+{
+  objc_setAssociatedObject(cls, &RCTBridgeModuleClassIsDeclared, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+/**
  * This function returns the module name for a given class.
  */
 NSString *RCTBridgeModuleNameForClass(Class cls)
@@ -120,7 +140,7 @@ dispatch_queue_t RCTJSThread;
       {
         if (class_conformsToProtocol(superclass, @protocol(RCTBridgeModule)))
         {
-          if (![RCTModuleClasses containsObject:cls]) {
+          if (![RCTModuleClasses containsObject:cls] && !RCTBridgeModuleClassIsDeclared(cls)) {
             RCTLogWarn(@"Class %@ was not exported. Did you forget to use "
                        "RCT_EXPORT_MODULE()?", cls);
 
