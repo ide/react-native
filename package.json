@@ -47,7 +47,6 @@
   },
   "dependencies": {
     "absolute-path": "0.0.0",
-    "babel": "5.8.21",
     "babel-core": "5.8.21",
     "bser": "1.0.0",
     "chalk": "1.0.0",
